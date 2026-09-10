@@ -1,0 +1,24 @@
+name: recipes_app
+description: >
+  Application Flutter multi-écrans de gestion de recettes : liste avec
+  recherche/filtrage, écran de détail, formulaire avec validation,
+  favoris et thème clair/sombre. Navigation gérée avec GoRouter.
+publish_to: 'none'
+version: 1.0.0+1
+
+environment:
+  sdk: '>=3.3.0 <4.0.0'
+
+dependencies:
+  flutter:
+    sdk: flutter
+  go_router: ^14.2.7
+  cupertino_icons: ^1.0.8
+
+dev_dependencies:
+  flutter_test:
+    sdk: flutter
+  flutter_lints: ^4.0.0
+
+flutter:
+  uses-material-design: true
