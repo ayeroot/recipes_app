@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
 import '../data/recipe_repository.dart';
 import '../data/favorites_controller.dart';
+import '../models/recipe.dart';
 import '../widgets/rating_stars.dart';
 
 /// Écran de détail d'une recette.
@@ -9,6 +11,9 @@ import '../widgets/rating_stars.dart';
 /// GoRouter) et va chercher les données correspondantes dans le
 /// [RecipeRepository] : aucune donnée n'est passée ou codée en dur
 /// directement dans le widget.
+///
+/// Permet aussi de modifier (réutilise [RecipeFormScreen] via
+/// `extra`) ou de supprimer la recette (avec confirmation).
 class RecipeDetailScreen extends StatefulWidget {
   final String recipeId;
   const RecipeDetailScreen({super.key, required this.recipeId});
@@ -22,6 +27,7 @@ class _RecipeDetailScreenState extends State<RecipeDetailScreen> {
   void initState() {
     super.initState();
     FavoritesController.instance.addListener(_onChanged);
+    RecipeRepository.instance.addListener(_onChanged);
   }
 
   void _onChanged() => setState(() {});
@@ -29,7 +35,34 @@ class _RecipeDetailScreenState extends State<RecipeDetailScreen> {
   @override
   void dispose() {
     FavoritesController.instance.removeListener(_onChanged);
+    RecipeRepository.instance.removeListener(_onChanged);
     super.dispose();
+  }
+
+  Future<void> _confirmDelete(Recipe recipe) async {
+    final confirmed = await showDialog<bool>(
+      context: context,
+      builder: (dialogContext) => AlertDialog(
+        title: const Text('Supprimer la recette ?'),
+        content: Text('"${recipe.title}" sera définitivement supprimée.'),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.of(dialogContext).pop(false),
+            child: const Text('Annuler'),
+          ),
+          FilledButton(
+            style: FilledButton.styleFrom(backgroundColor: Colors.red),
+            onPressed: () => Navigator.of(dialogContext).pop(true),
+            child: const Text('Supprimer'),
+          ),
+        ],
+      ),
+    );
+
+    if (confirmed == true && mounted) {
+      RecipeRepository.instance.deleteRecipe(recipe.id);
+      context.pop();
+    }
   }
 
   @override
@@ -53,6 +86,17 @@ class _RecipeDetailScreenState extends State<RecipeDetailScreen> {
             pinned: true,
             actions: [
               IconButton(
+                tooltip: 'Modifier',
+                icon: const Icon(Icons.edit_outlined),
+                onPressed: () => context.pushNamed('add', extra: recipe),
+              ),
+              IconButton(
+                tooltip: 'Supprimer',
+                icon: const Icon(Icons.delete_outline),
+                onPressed: () => _confirmDelete(recipe),
+              ),
+              IconButton(
+                tooltip: isFav ? 'Retirer des favoris' : 'Ajouter aux favoris',
                 icon: Icon(
                   isFav ? Icons.favorite : Icons.favorite_border,
                   color: isFav ? Colors.redAccent : null,
@@ -127,18 +171,24 @@ class _RecipeDetailScreenState extends State<RecipeDetailScreen> {
                   style: Theme.of(context).textTheme.titleMedium?.copyWith(fontWeight: FontWeight.bold),
                 ),
                 const SizedBox(height: 8),
-                Card(
-                  child: Column(
-                    children: [
-                      for (final ing in recipe.ingredients)
-                        ListTile(
-                          dense: true,
-                          leading: const Icon(Icons.circle, size: 8),
-                          title: Text(ing),
-                        ),
-                    ],
+                if (recipe.ingredients.isEmpty)
+                  Text(
+                    'Aucun ingrédient renseigné pour cette recette.',
+                    style: Theme.of(context).textTheme.bodyMedium,
+                  )
+                else
+                  Card(
+                    child: Column(
+                      children: [
+                        for (final ing in recipe.ingredients)
+                          ListTile(
+                            dense: true,
+                            leading: const Icon(Icons.circle, size: 8),
+                            title: Text(ing),
+                          ),
+                      ],
+                    ),
                   ),
-                ),
                 const SizedBox(height: 32),
               ]),
             ),

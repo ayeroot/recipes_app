@@ -233,4 +233,20 @@ class RecipeRepository extends ChangeNotifier {
     _recipes.insert(0, recipe);
     notifyListeners();
   }
+
+  /// Remplace une recette existante (même [Recipe.id]) par sa version
+  /// modifiée. Ne fait rien si l'identifiant n'existe pas.
+  void updateRecipe(Recipe updated) {
+    final index = _recipes.indexWhere((r) => r.id == updated.id);
+    if (index == -1) return;
+    _recipes[index] = updated;
+    notifyListeners();
+  }
+
+  /// Supprime une recette. Utilisé par le swipe-to-delete de la liste
+  /// et par le bouton de suppression de l'écran de détail.
+  void deleteRecipe(String id) {
+    _recipes.removeWhere((r) => r.id == id);
+    notifyListeners();
+  }
 }

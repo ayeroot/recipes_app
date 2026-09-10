@@ -8,7 +8,9 @@ import '../widgets/empty_state.dart';
 /// Écran listant uniquement les recettes marquées en favori.
 ///
 /// Réutilise les mêmes widgets (RecipeCard, EmptyState) que l'écran
-/// d'accueil, avec la même adaptation mobile / tablette.
+/// d'accueil, avec la même adaptation mobile / tablette. Le retrait
+/// des favoris se fait par glissement (swipe), avec une option
+/// "Annuler" via SnackBar.
 class FavoritesTab extends StatefulWidget {
   const FavoritesTab({super.key});
 
@@ -31,6 +33,19 @@ class _FavoritesTabState extends State<FavoritesTab> {
     FavoritesController.instance.removeListener(_onChanged);
     RecipeRepository.instance.removeListener(_onChanged);
     super.dispose();
+  }
+
+  void _removeFavorite(String id) {
+    FavoritesController.instance.toggle(id);
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(
+        content: const Text('Retiré des favoris.'),
+        action: SnackBarAction(
+          label: 'Annuler',
+          onPressed: () => FavoritesController.instance.toggle(id),
+        ),
+      ),
+    );
   }
 
   @override
@@ -61,13 +76,13 @@ class _FavoritesTabState extends State<FavoritesTab> {
                         crossAxisSpacing: 16,
                         childAspectRatio: 0.78,
                       ),
-                      itemBuilder: (context, index) => _buildCard(context, recipes[index].id),
+                      itemBuilder: (context, index) => _buildDismissibleCard(recipes[index].id),
                     );
                   }
                   return ListView.separated(
                     itemCount: recipes.length,
                     separatorBuilder: (_, __) => const SizedBox(height: 12),
-                    itemBuilder: (context, index) => _buildCard(context, recipes[index].id),
+                    itemBuilder: (context, index) => _buildDismissibleCard(recipes[index].id),
                   );
                 },
               ),
@@ -75,13 +90,27 @@ class _FavoritesTabState extends State<FavoritesTab> {
     );
   }
 
-  Widget _buildCard(BuildContext context, String id) {
+  Widget _buildDismissibleCard(String id) {
     final recipe = RecipeRepository.instance.findById(id)!;
-    return RecipeCard(
-      recipe: recipe,
-      isFavorite: true,
-      onTap: () => context.pushNamed('detail', pathParameters: {'id': recipe.id}),
-      onFavoriteToggle: () => FavoritesController.instance.toggle(recipe.id),
+    return Dismissible(
+      key: ValueKey(id),
+      direction: DismissDirection.endToStart,
+      background: Container(
+        decoration: BoxDecoration(
+          color: Colors.red,
+          borderRadius: BorderRadius.circular(16),
+        ),
+        alignment: Alignment.centerRight,
+        padding: const EdgeInsets.symmetric(horizontal: 20),
+        child: const Icon(Icons.heart_broken_outlined, color: Colors.white),
+      ),
+      onDismissed: (_) => _removeFavorite(id),
+      child: RecipeCard(
+        recipe: recipe,
+        isFavorite: true,
+        onTap: () => context.pushNamed('detail', pathParameters: {'id': recipe.id}),
+        onFavoriteToggle: () => FavoritesController.instance.toggle(recipe.id),
+      ),
     );
   }
 }

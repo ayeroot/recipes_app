@@ -2,8 +2,19 @@ import 'package:flutter/material.dart';
 import 'router/app_router.dart';
 import 'theme/app_theme.dart';
 import 'theme/theme_controller.dart';
+import 'data/favorites_controller.dart';
 
-void main() {
+Future<void> main() async {
+  // Nécessaire pour pouvoir utiliser des plugins (shared_preferences)
+  // avant l'appel à runApp.
+  WidgetsFlutterBinding.ensureInitialized();
+
+  // Recharge le thème et les favoris précédemment enregistrés sur
+  // l'appareil, afin que l'utilisateur retrouve ses préférences après
+  // avoir fermé l'application.
+  await ThemeController.instance.init();
+  await FavoritesController.instance.init();
+
   runApp(const RecipesApp());
 }
 
