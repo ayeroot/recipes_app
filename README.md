@@ -103,24 +103,13 @@ test/
 git clone https://github.com/ayeroot/recipes_app.git
 cd recipes_app
 
-# 2. Régénérer les dossiers de plateforme (android/, ios/, web/, ...)
-#    Ce dépôt ne versionne que le code source (lib/, test/, pubspec.yaml).
-#    Cette commande recrée les dossiers de plateforme sans toucher au
-#    code existant.
-flutter create .
-
-# 3. Installer les dépendances
+# 2. Installer les dépendances
 flutter pub get
 
-# 4. Lancer l'application
+# 3. Lancer l'application
 flutter run                 # appareil / émulateur connecté
 # ou cibler une plateforme précise :
 flutter run -d chrome       # Web
-flutter run -d windows      # Windows
-```
-
-### Lancer les tests
-
 ```bash
 flutter test
 ```
@@ -143,10 +132,7 @@ Les captures se trouvent dans le dossier [`screenshots/`](screenshots/).
 |---|---|---|
 | ![Mobile](screenshots/mobile.png) | ![Tablette](screenshots/tablet.png) | ![Desktop](screenshots/desktop.png) |
 
-> ⚠️ Ajoutez vos propres captures dans `screenshots/` (voir le guide
-> [`screenshots/README.md`](screenshots/README.md)) avant de rendre le
-> projet — les images ci-dessus ne s'afficheront qu'une fois les
-> fichiers PNG ajoutés.
+> Les 7 captures ci-dessus sont incluses dans le dépôt (dossier `screenshots/`).
 
 ## 🛠️ Technologies
 

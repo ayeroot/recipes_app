@@ -37,30 +37,30 @@ class _SettingsTabState extends State<SettingsTab> {
           const Text('Apparence', style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16)),
           const SizedBox(height: 8),
           Card(
-            child: Column(
-              children: [
-                RadioListTile<ThemeMode>(
-                  title: const Text('Clair'),
-                  secondary: const Icon(Icons.light_mode_outlined),
-                  value: ThemeMode.light,
-                  groupValue: mode,
-                  onChanged: (v) => ThemeController.instance.setMode(v!),
-                ),
-                RadioListTile<ThemeMode>(
-                  title: const Text('Sombre'),
-                  secondary: const Icon(Icons.dark_mode_outlined),
-                  value: ThemeMode.dark,
-                  groupValue: mode,
-                  onChanged: (v) => ThemeController.instance.setMode(v!),
-                ),
-                RadioListTile<ThemeMode>(
-                  title: const Text('Système'),
-                  secondary: const Icon(Icons.settings_suggest_outlined),
-                  value: ThemeMode.system,
-                  groupValue: mode,
-                  onChanged: (v) => ThemeController.instance.setMode(v!),
-                ),
-              ],
+            child: RadioGroup<ThemeMode>(
+              groupValue: mode,
+              onChanged: (v) {
+                if (v != null) ThemeController.instance.setMode(v);
+              },
+              child: const Column(
+                children: [
+                  RadioListTile<ThemeMode>(
+                    title: Text('Clair'),
+                    secondary: Icon(Icons.light_mode_outlined),
+                    value: ThemeMode.light,
+                  ),
+                  RadioListTile<ThemeMode>(
+                    title: Text('Sombre'),
+                    secondary: Icon(Icons.dark_mode_outlined),
+                    value: ThemeMode.dark,
+                  ),
+                  RadioListTile<ThemeMode>(
+                    title: Text('Système'),
+                    secondary: Icon(Icons.settings_suggest_outlined),
+                    value: ThemeMode.system,
+                  ),
+                ],
+              ),
             ),
           ),
           const SizedBox(height: 24),

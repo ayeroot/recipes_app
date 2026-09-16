@@ -154,7 +154,7 @@ class _RecipeFormScreenState extends State<RecipeFormScreen> {
             ),
             const SizedBox(height: 16),
             DropdownButtonFormField<String>(
-              value: _category,
+              initialValue: _category,
               decoration: const InputDecoration(
                 labelText: 'Catégorie',
                 prefixIcon: Icon(Icons.category_outlined),
@@ -164,7 +164,7 @@ class _RecipeFormScreenState extends State<RecipeFormScreen> {
             ),
             const SizedBox(height: 16),
             DropdownButtonFormField<String>(
-              value: _difficulty,
+              initialValue: _difficulty,
               decoration: const InputDecoration(
                 labelText: 'Difficulté',
                 prefixIcon: Icon(Icons.speed_outlined),
