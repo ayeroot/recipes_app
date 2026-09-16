@@ -8,6 +8,7 @@ pour valider la maîtrise des widgets Flutter et de la navigation.
 
 ---
 
+
 ## ✨ Fonctionnalités
 
 - **6 écrans distincts** : Accueil (liste), Favoris, Réglages, Détail
